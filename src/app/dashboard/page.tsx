@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { TOOLS } from "@/lib/tools";
+import { AdBanner } from "@/components/AdBanner";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
@@ -69,7 +70,6 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar / Filters */}
           <aside className="lg:col-span-1 space-y-6">
             <Card className="glass-card">
               <CardContent className="p-4 space-y-2">
@@ -129,9 +129,10 @@ export default function Dashboard() {
                 )}
               </CardContent>
             </Card>
+
+            <AdBanner />
           </aside>
 
-          {/* Tools Grid */}
           <div className="lg:col-span-3">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredTools.map((tool) => (
@@ -176,6 +177,8 @@ export default function Dashboard() {
                 </Button>
               </div>
             )}
+            
+            <AdBanner />
           </div>
         </div>
       </main>

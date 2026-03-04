@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TOOLS } from "@/lib/tools";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { AdBanner } from "@/components/AdBanner";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Sparkles, Zap, Shield, Cpu } from "lucide-react";
 import Image from "next/image";
@@ -41,9 +42,6 @@ export default function Home() {
                 Explore All Tools <ArrowRight className="ml-2" size={20} />
               </Button>
             </Link>
-            <Button size="lg" variant="ghost" className="px-8 py-6 rounded-full text-lg hover:bg-primary/5">
-              Watch Demo
-            </Button>
           </div>
           
           <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto opacity-70 grayscale hover:grayscale-0 transition-all">
@@ -63,6 +61,10 @@ export default function Home() {
         </div>
       </section>
 
+      <div className="container mx-auto px-4">
+        <AdBanner />
+      </div>
+
       {/* Tools Preview */}
       <section id="tools" className="py-24 bg-white/50">
         <div className="container mx-auto px-4">
@@ -72,7 +74,7 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {TOOLS.map((tool) => (
+            {TOOLS.slice(0, 6).map((tool) => (
               <Link href={`/tools/${tool.id}`} key={tool.id}>
                 <Card className="group glass-card h-full hover:scale-[1.02] transition-all cursor-pointer overflow-hidden border-transparent hover:border-primary/20">
                   <CardContent className="p-8">
@@ -96,12 +98,16 @@ export default function Home() {
           <div className="mt-16 text-center">
             <Link href="/dashboard">
               <Button variant="outline" size="lg" className="rounded-full px-8">
-                View Dashboard
+                View All Tools
               </Button>
             </Link>
           </div>
         </div>
       </section>
+
+      <div className="container mx-auto px-4">
+        <AdBanner />
+      </div>
 
       {/* Features Section */}
       <section id="features" className="py-24 relative overflow-hidden">
