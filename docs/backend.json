@@ -88,7 +88,8 @@
     "providers": [
       "password",
       "anonymous",
-      "google.com"
+      "google.com",
+      "phone"
     ]
   },
   "firestore": {
@@ -100,7 +101,7 @@
           "schema": {
             "$ref": "#/backend/entities/UserProfile"
           },
-          "description": "Stores individual user profile data. Each document's ID is the Firebase Authentication UID of the user. Access is restricted to the owner (the user whose UID matches the document ID).",
+          "description": "Stores individual user profile data. Each document's ID is the Firebase Authentication UID of the user.",
           "params": [
             {
               "name": "userId",
@@ -116,11 +117,11 @@
           "schema": {
             "$ref": "#/backend/entities/ToolUsageLog"
           },
-          "description": "Stores a historical record of each tool usage by a specific user. This is a subcollection under a user's profile. Includes denormalized 'userId' in the path itself for authorization independence and QAPs. Access is restricted to the owner (the user whose UID matches the parent 'userId').",
+          "description": "Stores a historical record of each tool usage by a specific user.",
           "params": [
             {
               "name": "userId",
-              "description": "The unique Firebase Authentication User ID of the owner of this log entry."
+              "description": "The unique Firebase Authentication User ID of the owner."
             },
             {
               "name": "toolUsageLogId",
@@ -129,7 +130,6 @@
           ]
         }
       }
-    ],
-    "reasoning": "The Firestore structure for the 'Ultra All AI' platform prioritizes security, scalability, and debuggability in line with the core design principles. \n\n**Authorization Independence via Denormalization:**\nAuthorization for user-specific data is intrinsically tied to the path structure, eliminating the need for `get()` calls in security rules. For user profiles, the path `/users/{userId}` means the document ID itself is the `userId`, allowing rules to directly compare `request.auth.uid` with the `{userId}` wildcard without fetching any parent document. Similarly, for `ToolUsageLog` entries at `/users/{userId}/toolUsageLogs/{toolUsageLogId}`, the `userId` in the path is denormalized directly from the parent user. The `ToolUsageLog` entity also explicitly includes a `userId` field, further reinforcing this direct ownership link. This ensures that creating, updating, or deleting these documents does not incur additional reads for authorization checks, maintaining atomicity and performance.\n\n**Support for Query-Aware Permissions (QAPs):**\nThe structural segregation ensures that `list` operations are secure by design. Each user's data (profile and tool usage logs) resides in a subcollection directly under their unique user ID (`/users/{userId}`). This path-based ownership means that any `list` query initiated by a client *must* include `request.auth.uid` in the path to retrieve their own data. For example, a query for `toolUsageLogs` can only be performed securely if it targets `/users/request.auth.uid/toolUsageLogs`. Firestore security rules can then easily enforce `allow read: if request.auth.uid == userId;`, guaranteeing that users can only read their own data and preventing unauthorized data leakage through broad `list` operations. This structure naturally enforces QAPs without complex rule logic or filters, as the rules act as validators for the client's requested path."
+    ]
   }
 }

@@ -3,12 +3,12 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Zap, LayoutDashboard, LogOut, User as UserIcon, Loader2 } from "lucide-react";
+import { Zap, LayoutDashboard, LogOut, User as UserIcon, LogIn } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useUser, useAuth } from "@/firebase";
-import { initiateGoogleSignIn } from "@/firebase/non-blocking-login";
 import { signOut } from "firebase/auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -22,6 +22,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,12 +32,9 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleSignIn = () => {
-    initiateGoogleSignIn(auth);
-  };
-
-  const handleSignOut = () => {
-    signOut(auth);
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push("/");
   };
 
   return (
@@ -77,7 +75,7 @@ export function Navbar() {
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={user.photoURL || ""} alt={user.displayName || "User"} />
                       <AvatarFallback className="bg-primary/10 text-primary">
-                        {user.displayName?.charAt(0) || <UserIcon size={18} />}
+                        {user.displayName?.charAt(0) || user.email?.charAt(0) || <UserIcon size={18} />}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -85,8 +83,8 @@ export function Navbar() {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.displayName}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                      <p className="text-sm font-medium leading-none">{user.displayName || "User"}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email || user.phoneNumber}</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -105,9 +103,12 @@ export function Navbar() {
               </DropdownMenu>
             </>
           ) : (
-            <Button onClick={handleSignIn} className="gradient-bg gradient-bg-hover text-white rounded-full px-6">
-              Get Started
-            </Button>
+            <Link href="/login">
+              <Button className="gradient-bg gradient-bg-hover text-white rounded-full px-6">
+                <LogIn size={18} className="mr-2" />
+                Get Started
+              </Button>
+            </Link>
           )}
         </div>
       </div>
