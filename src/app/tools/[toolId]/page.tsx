@@ -5,20 +5,19 @@ import { Navbar } from "@/components/Navbar";
 import { TOOLS } from "@/lib/tools";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowLeft, Send, Copy, CheckCircle2, RefreshCw } from "lucide-react";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 import { InstagramBioForm } from "@/components/tools/InstagramBioForm";
 import { YoutubeTitleForm } from "@/components/tools/YoutubeTitleForm";
 import { InstagramCaptionForm } from "@/components/tools/InstagramCaptionForm";
 import { HashtagGeneratorForm } from "@/components/tools/HashtagGeneratorForm";
 import { QRGeneratorForm } from "@/components/tools/QRGeneratorForm";
-import { useToast } from "@/hooks/use-toast";
+import { ImageGeneratorForm } from "@/components/tools/ImageGeneratorForm";
+import { SmartAssistantForm } from "@/components/tools/SmartAssistantForm";
 
 export default function ToolPage({ params }: { params: Promise<{ toolId: string }> }) {
   const { toolId } = use(params);
   const tool = TOOLS.find((t) => t.id === toolId);
-  const { toast } = useToast();
   
   if (!tool) {
     return <div>Tool not found</div>;
@@ -26,6 +25,10 @@ export default function ToolPage({ params }: { params: Promise<{ toolId: string 
 
   const renderToolInterface = () => {
     switch (toolId) {
+      case "ai-image-generator":
+        return <ImageGeneratorForm />;
+      case "smart-assistant":
+        return <SmartAssistantForm />;
       case "instagram-bio":
         return <InstagramBioForm />;
       case "youtube-title":

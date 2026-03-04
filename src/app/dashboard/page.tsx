@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { TOOLS } from "@/lib/tools";
 import Link from "next/link";
 import { useState } from "react";
-import { Search, Grid, List, Sparkles, Clock, Star, Zap, ArrowRight } from "lucide-react";
+import { Search, Grid, Sparkles, Clock, Star, Zap, ArrowRight } from "lucide-react";
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -82,8 +82,8 @@ export default function Dashboard() {
                     <Clock size={14} />
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium">QR Generated</p>
-                    <p className="text-xs text-muted-foreground">2 hours ago</p>
+                    <p className="font-medium">Image Generated</p>
+                    <p className="text-xs text-muted-foreground">Just now</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
@@ -91,8 +91,8 @@ export default function Dashboard() {
                     <Clock size={14} />
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium">Caption Created</p>
-                    <p className="text-xs text-muted-foreground">Yesterday</p>
+                    <p className="font-medium">QR Generated</p>
+                    <p className="text-xs text-muted-foreground">2 hours ago</p>
                   </div>
                 </div>
               </CardContent>

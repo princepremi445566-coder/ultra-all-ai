@@ -8,7 +8,8 @@ import {
   Image as ImageIcon, 
   FileStack, 
   Type,
-  Zap
+  Sparkles,
+  MessageSquare
 } from "lucide-react";
 
 export interface Tool {
@@ -22,12 +23,27 @@ export interface Tool {
 
 export const TOOLS: Tool[] = [
   {
+    id: "ai-image-generator",
+    name: "AI Image Generator",
+    description: "Generate stunning high-resolution images from text prompts using advanced AI.",
+    icon: ImageIcon,
+    category: "AI",
+    isNew: true,
+  },
+  {
+    id: "smart-assistant",
+    name: "Smart AI Assistant",
+    description: "An advanced conversational agent for coding, writing, and analysis.",
+    icon: MessageSquare,
+    category: "AI",
+    isNew: true,
+  },
+  {
     id: "instagram-bio",
     name: "Instagram Bio Generator",
     description: "Create creative and engaging Instagram bios that stand out.",
     icon: Instagram,
     category: "AI",
-    isNew: true,
   },
   {
     id: "instagram-caption",
@@ -49,7 +65,6 @@ export const TOOLS: Tool[] = [
     description: "Optimized, SEO-friendly titles to increase your click-through rate.",
     icon: Youtube,
     category: "AI",
-    isNew: true,
   },
   {
     id: "qr-generator",
