@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -17,7 +16,7 @@ import {
   initiatePhoneSignIn 
 } from "@/firebase/non-blocking-login";
 import { useRouter } from "next/navigation";
-import { Mail, Phone, Lock, Chrome, Loader2, ArrowRight } from "lucide-react";
+import { Mail, Phone, Lock, Chrome, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ConfirmationResult } from "firebase/auth";
 
@@ -27,12 +26,10 @@ export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
   
-  // Email state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   
-  // Phone state
   const [phone, setPhone] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
@@ -63,7 +60,7 @@ export default function LoginPage() {
     try {
       if (isSignUp) {
         await initiateEmailSignUp(auth, email, password);
-        toast({ title: "Account Created", description: "Welcome to Ultra All AI!" });
+        toast({ title: "Account Created", description: "Welcome!" });
       } else {
         await initiateEmailSignIn(auth, email, password);
         toast({ title: "Welcome Back", description: "Successfully logged in." });
@@ -82,7 +79,7 @@ export default function LoginPage() {
       const appVerifier = setupRecaptcha(auth, 'recaptcha-container');
       const result = await initiatePhoneSignIn(auth, phone, appVerifier);
       setConfirmationResult(result);
-      toast({ title: "Code Sent", description: "Check your phone for the verification code." });
+      toast({ title: "Code Sent", description: "Check your phone for the code." });
     } catch (error: any) {
       toast({ title: "Phone Auth Error", description: error.message, variant: "destructive" });
     } finally {
@@ -96,7 +93,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await confirmationResult.confirm(verificationCode);
-      toast({ title: "Success", description: "Phone number verified!" });
+      toast({ title: "Success", description: "Phone verified!" });
     } catch (error: any) {
       toast({ title: "Verification Failed", description: error.message, variant: "destructive" });
     } finally {
@@ -115,12 +112,11 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#F4F0F8]">
       <Navbar />
-      
       <main className="container mx-auto px-4 pt-32 pb-20 flex justify-center">
         <Card className="w-full max-w-md glass-card">
           <CardHeader className="text-center">
             <CardTitle className="text-3xl font-bold">Get Started</CardTitle>
-            <CardDescription>Choose your preferred way to join Ultra All AI</CardDescription>
+            <CardDescription>Join Ultra All AI</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="google" className="space-y-6">
@@ -130,66 +126,38 @@ export default function LoginPage() {
                 <TabsTrigger value="phone">Phone</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="google" className="space-y-4">
-                <div className="py-8 flex flex-col items-center justify-center space-y-4">
-                  <div className="w-20 h-20 bg-primary/5 rounded-full flex items-center justify-center text-primary">
-                    <Chrome size={40} />
-                  </div>
-                  <p className="text-sm text-center text-muted-foreground px-8">
-                    Sign in instantly with your Google account for the fastest experience.
-                  </p>
-                  <Button 
-                    onClick={handleGoogleLogin} 
-                    disabled={loading}
-                    className="w-full gradient-bg text-white h-12 text-lg"
-                  >
-                    {loading ? <Loader2 className="animate-spin mr-2" /> : <Chrome className="mr-2" />}
-                    Continue with Google
-                  </Button>
-                </div>
+              <TabsContent value="google" className="py-4 text-center">
+                <Button 
+                  onClick={handleGoogleLogin} 
+                  disabled={loading}
+                  className="w-full gradient-bg text-white h-12 text-lg"
+                >
+                  {loading ? <Loader2 className="animate-spin mr-2" /> : <Chrome className="mr-2" />}
+                  Continue with Google
+                </Button>
               </TabsContent>
 
               <TabsContent value="email">
                 <form onSubmit={handleEmailAuth} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
+                    <Label htmlFor="email">Email</Label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                      <Input 
-                        id="email" 
-                        type="email" 
-                        placeholder="name@example.com" 
-                        className="pl-10"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                      />
+                      <Input id="email" type="email" placeholder="name@example.com" className="pl-10" value={email} onChange={(e) => setEmail(e.target.value)} required />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="password">Password</Label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                      <Input 
-                        id="password" 
-                        type="password" 
-                        className="pl-10"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                      />
+                      <Input id="password" type="password" className="pl-10" value={password} onChange={(e) => setPassword(e.target.value)} required />
                     </div>
                   </div>
                   <Button type="submit" disabled={loading} className="w-full gradient-bg text-white h-12">
                     {loading && <Loader2 className="animate-spin mr-2" />}
                     {isSignUp ? "Create Account" : "Sign In"}
                   </Button>
-                  <Button 
-                    type="button" 
-                    variant="link" 
-                    className="w-full" 
-                    onClick={() => setIsSignUp(!isSignUp)}
-                  >
+                  <Button type="button" variant="link" className="w-full" onClick={() => setIsSignUp(!isSignUp)}>
                     {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
                   </Button>
                 </form>
@@ -202,40 +170,20 @@ export default function LoginPage() {
                       <Label htmlFor="phone">Phone Number</Label>
                       <div className="relative">
                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-                        <Input 
-                          id="phone" 
-                          type="tel" 
-                          placeholder="+1 234 567 8900" 
-                          className="pl-10"
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          required
-                        />
+                        <Input id="phone" type="tel" placeholder="+1234567890" className="pl-10" value={phone} onChange={(e) => setPhone(e.target.value)} required />
                       </div>
-                      <p className="text-[10px] text-muted-foreground">Format: +CountryCode Number</p>
                     </div>
                     <div id="recaptcha-container"></div>
                     <Button type="submit" disabled={loading} className="w-full gradient-bg text-white h-12">
-                      {loading ? <Loader2 className="animate-spin mr-2" /> : "Send SMS Code"}
+                      {loading ? <Loader2 className="animate-spin mr-2" /> : "Send Code"}
                     </Button>
                   </form>
                 ) : (
                   <form onSubmit={handleVerifyCode} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="code">Verification Code</Label>
-                      <Input 
-                        id="code" 
-                        placeholder="123456" 
-                        value={verificationCode}
-                        onChange={(e) => setVerificationCode(e.target.value)}
-                        required
-                      />
-                    </div>
+                    <Label htmlFor="code">Verification Code</Label>
+                    <Input id="code" placeholder="123456" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} required />
                     <Button type="submit" disabled={loading} className="w-full gradient-bg text-white h-12">
-                      {loading ? <Loader2 className="animate-spin mr-2" /> : "Verify & Sign In"}
-                    </Button>
-                    <Button variant="ghost" className="w-full" onClick={() => setConfirmationResult(null)}>
-                      Change Phone Number
+                      {loading ? <Loader2 className="animate-spin mr-2" /> : "Verify Code"}
                     </Button>
                   </form>
                 )}

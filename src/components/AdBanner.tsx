@@ -2,17 +2,22 @@
 
 import { useEffect, useRef } from "react";
 
+/**
+ * A reusable AdSense unit component.
+ * It ensures the ad script is called once per unit mount.
+ */
 export function AdBanner() {
   const initialized = useRef(false);
 
   useEffect(() => {
+    // Check if script is available and not already initialized for this unit
     if (typeof window !== "undefined" && !initialized.current) {
       try {
         // @ts-ignore
         (window.adsbygoogle = window.adsbygoogle || []).push({});
         initialized.current = true;
       } catch (e) {
-        // Ad blockers or script loading issues
+        // Silent catch for ad-blockers or network issues
       }
     }
   }, []);
