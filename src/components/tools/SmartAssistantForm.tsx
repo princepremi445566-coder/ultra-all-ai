@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { smartAssistant } from "@/ai/flows/smart-assistant-flow";
-import { Loader2, Copy, Send, MessageSquare, Sparkles } from "lucide-react";
+import { Loader2, Copy, Send, MessageSquare, Sparkles, Cpu } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUser, useFirestore } from "@/firebase";
 import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
@@ -55,9 +55,9 @@ export function SmartAssistantForm() {
     <div className="space-y-8">
       <div className="space-y-4">
         <div className="p-4 bg-primary/5 rounded-xl border border-primary/10 flex items-start gap-3">
-          <MessageSquare className="text-primary mt-1" size={20} />
+          <Cpu className="text-primary mt-1" size={20} />
           <p className="text-sm text-muted-foreground">
-            Our Smart Assistant leverages the latest Omni-Models for reasoning, coding, and analysis.
+            Our Smart Assistant is an Omni-Model powerhouse capable of high-level reasoning, coding, and analysis—comparable to the latest OpenAI, Grok, and Cohere APIs.
           </p>
         </div>
         

@@ -2,14 +2,16 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { generateHashtags } from "@/ai/flows/generate-hashtags-flow";
-import { Loader2, Copy, Hash, Sparkles } from "lucide-react";
+import { Loader2, Copy, Hash } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { useUser, useFirestore } from "@/firebase";
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { collection } from "firebase/firestore";
 
 export function HashtagGeneratorForm() {
   const [loading, setLoading] = useState(false);
@@ -17,6 +19,8 @@ export function HashtagGeneratorForm() {
   const [numHashtags, setNumHashtags] = useState([10]);
   const [results, setResults] = useState<string[]>([]);
   const { toast } = useToast();
+  const { user } = useUser();
+  const firestore = useFirestore();
 
   const handleGenerate = async () => {
     if (!content) {
@@ -31,6 +35,17 @@ export function HashtagGeneratorForm() {
         numHashtags: numHashtags[0] 
       });
       setResults(hashtags);
+
+      if (user && firestore) {
+        addDocumentNonBlocking(collection(firestore, 'users', user.uid, 'toolUsageLogs'), {
+          id: Math.random().toString(36).substring(7),
+          userId: user.uid,
+          toolName: "Hashtag Generator",
+          timestamp: new Date().toISOString(),
+          inputData: JSON.stringify({ postContent: content, numHashtags: numHashtags[0] }),
+          outputResult: JSON.stringify({ hashtags }),
+        });
+      }
     } catch (error) {
       toast({ title: "Error", description: "Failed to generate hashtags", variant: "destructive" });
     } finally {

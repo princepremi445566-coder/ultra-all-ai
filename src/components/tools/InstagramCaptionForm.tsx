@@ -9,6 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { generateInstagramCaption } from "@/ai/flows/generate-instagram-caption-flow";
 import { Loader2, Copy, Sparkles, Hash } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useUser, useFirestore } from "@/firebase";
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { collection } from "firebase/firestore";
+import { Badge } from "@/components/ui/badge";
 
 export function InstagramCaptionForm() {
   const [loading, setLoading] = useState(false);
@@ -17,6 +21,8 @@ export function InstagramCaptionForm() {
   const [keywords, setKeywords] = useState("");
   const [result, setResult] = useState<{ caption: string, hashtags: string[] } | null>(null);
   const { toast } = useToast();
+  const { user } = useUser();
+  const firestore = useFirestore();
 
   const handleGenerate = async () => {
     if (!description) {
@@ -29,6 +35,17 @@ export function InstagramCaptionForm() {
       const keywordArray = keywords ? keywords.split(",").map(k => k.trim()) : [];
       const output = await generateInstagramCaption({ description, tone, keywords: keywordArray });
       setResult(output);
+
+      if (user && firestore) {
+        addDocumentNonBlocking(collection(firestore, 'users', user.uid, 'toolUsageLogs'), {
+          id: Math.random().toString(36).substring(7),
+          userId: user.uid,
+          toolName: "Instagram Caption Generator",
+          timestamp: new Date().toISOString(),
+          inputData: JSON.stringify({ description, tone, keywords }),
+          outputResult: JSON.stringify(output),
+        });
+      }
     } catch (error) {
       toast({ title: "Error", description: "Failed to generate caption", variant: "destructive" });
     } finally {

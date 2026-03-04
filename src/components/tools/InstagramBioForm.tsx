@@ -7,8 +7,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { generateInstagramBio } from "@/ai/flows/generate-instagram-bio-flow";
-import { Loader2, Copy, CheckCircle2, Sparkles } from "lucide-react";
+import { Loader2, Copy, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useUser, useFirestore } from "@/firebase";
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { collection } from "firebase/firestore";
 
 export function InstagramBioForm() {
   const [loading, setLoading] = useState(false);
@@ -17,6 +20,8 @@ export function InstagramBioForm() {
   const [context, setContext] = useState("");
   const [result, setResult] = useState<string | null>(null);
   const { toast } = useToast();
+  const { user } = useUser();
+  const firestore = useFirestore();
 
   const handleGenerate = async () => {
     if (!keywords) {
@@ -28,6 +33,17 @@ export function InstagramBioForm() {
     try {
       const { bio } = await generateInstagramBio({ keywords, tone, context });
       setResult(bio);
+
+      if (user && firestore) {
+        addDocumentNonBlocking(collection(firestore, 'users', user.uid, 'toolUsageLogs'), {
+          id: Math.random().toString(36).substring(7),
+          userId: user.uid,
+          toolName: "Instagram Bio Generator",
+          timestamp: new Date().toISOString(),
+          inputData: JSON.stringify({ keywords, tone, context }),
+          outputResult: JSON.stringify({ bio }),
+        });
+      }
     } catch (error) {
       toast({ title: "Error", description: "Failed to generate bio", variant: "destructive" });
     } finally {

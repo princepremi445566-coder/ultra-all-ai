@@ -6,8 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { generateYoutubeTitle } from "@/ai/flows/generate-youtube-title-flow";
-import { Loader2, Copy, Sparkles, Layout } from "lucide-react";
+import { Loader2, Copy, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useUser, useFirestore } from "@/firebase";
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { collection } from "firebase/firestore";
 
 export function YoutubeTitleForm() {
   const [loading, setLoading] = useState(false);
@@ -16,6 +19,8 @@ export function YoutubeTitleForm() {
   const [targetAudience, setTargetAudience] = useState("");
   const [results, setResults] = useState<string[]>([]);
   const { toast } = useToast();
+  const { user } = useUser();
+  const firestore = useFirestore();
 
   const handleGenerate = async () => {
     if (!description || !keywords) {
@@ -31,6 +36,17 @@ export function YoutubeTitleForm() {
         targetAudience 
       });
       setResults(titles);
+
+      if (user && firestore) {
+        addDocumentNonBlocking(collection(firestore, 'users', user.uid, 'toolUsageLogs'), {
+          id: Math.random().toString(36).substring(7),
+          userId: user.uid,
+          toolName: "YouTube Title Generator",
+          timestamp: new Date().toISOString(),
+          inputData: JSON.stringify({ videoDescription: description, keywords, targetAudience }),
+          outputResult: JSON.stringify({ titles }),
+        });
+      }
     } catch (error) {
       toast({ title: "Error", description: "Failed to generate titles", variant: "destructive" });
     } finally {
