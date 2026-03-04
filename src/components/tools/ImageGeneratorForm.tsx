@@ -7,12 +7,17 @@ import { Label } from "@/components/ui/label";
 import { generateImage } from "@/ai/flows/generate-image-flow";
 import { Loader2, Download, Sparkles, ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useUser, useFirestore } from "@/firebase";
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { collection } from "firebase/firestore";
 
 export function ImageGeneratorForm() {
   const [loading, setLoading] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { toast } = useToast();
+  const { user } = useUser();
+  const firestore = useFirestore();
 
   const handleGenerate = async () => {
     if (!prompt) {
@@ -24,6 +29,18 @@ export function ImageGeneratorForm() {
     try {
       const { imageUrl } = await generateImage({ prompt });
       setImageUrl(imageUrl);
+      
+      if (user && firestore) {
+        addDocumentNonBlocking(collection(firestore, 'users', user.uid, 'toolUsageLogs'), {
+          id: Math.random().toString(36).substring(7),
+          userId: user.uid,
+          toolName: "AI Image Generator",
+          timestamp: new Date().toISOString(),
+          inputData: JSON.stringify({ prompt }),
+          outputResult: "Image Generated Successfully",
+        });
+      }
+      
       toast({ title: "Success", description: "Your image has been generated!" });
     } catch (error) {
       console.error(error);
@@ -37,7 +54,7 @@ export function ImageGeneratorForm() {
     if (!imageUrl) return;
     const link = document.createElement("a");
     link.href = imageUrl;
-    link.download = `generated-ai-image-${Date.now()}.png`;
+    link.download = `ultra-ai-image-${Date.now()}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -74,7 +91,7 @@ export function ImageGeneratorForm() {
             </div>
           </div>
           <p className="text-center text-sm text-muted-foreground italic">
-            "Propelled by Gemini Imagen 4"
+            Powered by Stability-grade Imagen 4
           </p>
         </div>
       )}

@@ -14,6 +14,7 @@ import { HashtagGeneratorForm } from "@/components/tools/HashtagGeneratorForm";
 import { QRGeneratorForm } from "@/components/tools/QRGeneratorForm";
 import { ImageGeneratorForm } from "@/components/tools/ImageGeneratorForm";
 import { SmartAssistantForm } from "@/components/tools/SmartAssistantForm";
+import { LoveCalculatorForm } from "@/components/tools/LoveCalculatorForm";
 
 export default function ToolPage({ params }: { params: Promise<{ toolId: string }> }) {
   const { toolId } = use(params);
@@ -39,6 +40,8 @@ export default function ToolPage({ params }: { params: Promise<{ toolId: string 
         return <HashtagGeneratorForm />;
       case "qr-generator":
         return <QRGeneratorForm />;
+      case "love-calculator":
+        return <LoveCalculatorForm />;
       default:
         return (
           <div className="text-center py-12">
@@ -80,13 +83,13 @@ export default function ToolPage({ params }: { params: Promise<{ toolId: string 
                 <div className="space-y-4 text-sm">
                   <div className="p-3 bg-primary/5 rounded-lg border border-primary/10">
                     <p className="font-semibold text-primary mb-1">How to use:</p>
-                    <p className="text-muted-foreground">Fill in the required fields and click generate to get your {tool.category.toLowerCase()} results.</p>
+                    <p className="text-muted-foreground">Fill in the required fields and click generate to get your results.</p>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <CheckCircle2 size={16} className="text-green-500" /> AI-Powered Accuracy
+                    <CheckCircle2 size={16} className="text-green-500" /> Premium Results
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground">
-                    <CheckCircle2 size={16} className="text-green-500" /> Export Ready
+                    <CheckCircle2 size={16} className="text-green-500" /> Secure Processing
                   </div>
                 </div>
               </CardContent>

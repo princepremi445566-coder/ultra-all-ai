@@ -7,14 +7,26 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { TOOLS } from "@/lib/tools";
 import Link from "next/link";
-import { useState } from "react";
-import { useUser } from "@/firebase";
+import { useState, useEffect } from "react";
+import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
 import { Search, Grid, Sparkles, Clock, Star, Zap, ArrowRight } from "lucide-react";
+import { collection, query, orderBy, limit } from "firebase/firestore";
+import { formatDistanceToNow } from "date-fns";
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "ai" | "utility">("all");
+  const [greeting, setGreeting] = useState("Creator");
   const { user } = useUser();
+  const firestore = useFirestore();
+
+  useEffect(() => {
+    if (user?.displayName) {
+      setGreeting(user.displayName.split(' ')[0]);
+    } else {
+      setGreeting("Creator");
+    }
+  }, [user]);
 
   const filteredTools = TOOLS.filter(tool => {
     const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -23,7 +35,16 @@ export default function Dashboard() {
     return matchesSearch && matchesTab;
   });
 
-  const firstName = user?.displayName ? user.displayName.split(' ')[0] : "Creator";
+  const recentLogsQuery = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return query(
+      collection(firestore, 'users', user.uid, 'toolUsageLogs'),
+      orderBy('timestamp', 'desc'),
+      limit(5)
+    );
+  }, [firestore, user]);
+
+  const { data: recentLogs, isLoading: isLogsLoading } = useCollection(recentLogsQuery);
 
   return (
     <div className="min-h-screen bg-[#F4F0F8]">
@@ -32,7 +53,7 @@ export default function Dashboard() {
       <main className="container mx-auto px-4 pt-32 pb-20">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Welcome back, <span className="gradient-text">{firstName}</span></h1>
+            <h1 className="text-4xl font-bold mb-2">Welcome back, <span className="gradient-text">{greeting}</span></h1>
             <p className="text-muted-foreground">What would you like to build today?</p>
           </div>
           
@@ -81,24 +102,25 @@ export default function Dashboard() {
                 <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Recent Activity</CardTitle>
               </CardHeader>
               <CardContent className="p-4 pt-0 space-y-4">
-                <div className="flex items-center gap-3 text-sm">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                    <Clock size={14} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium">Image Generated</p>
-                    <p className="text-xs text-muted-foreground">Just now</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                    <Clock size={14} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium">QR Generated</p>
-                    <p className="text-xs text-muted-foreground">2 hours ago</p>
-                  </div>
-                </div>
+                {isLogsLoading ? (
+                  <p className="text-sm text-muted-foreground">Loading activity...</p>
+                ) : recentLogs && recentLogs.length > 0 ? (
+                  recentLogs.map((log) => (
+                    <div key={log.id} className="flex items-center gap-3 text-sm">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <Clock size={14} />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium">{log.toolName}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(new Date(log.timestamp), { addSuffix: true })}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-muted-foreground italic">No recent activity found. Try a tool!</p>
+                )}
               </CardContent>
             </Card>
           </aside>
