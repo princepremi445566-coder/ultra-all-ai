@@ -1,8 +1,8 @@
-
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { FirebaseClientProvider } from '@/firebase/client-provider';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'Ultra All AI - Premium AI Tools Hub',
@@ -22,6 +22,12 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased min-h-screen">
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8786660437030626"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <FirebaseClientProvider>
           {children}
           <Toaster />
