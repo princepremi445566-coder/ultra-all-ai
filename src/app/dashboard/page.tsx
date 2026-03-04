@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { TOOLS } from "@/lib/tools";
 import Link from "next/link";
 import { useState } from "react";
-import { Search, Grid, List, Sparkles, Clock, Star, Zap } from "lucide-react";
+import { Search, Grid, List, Sparkles, Clock, Star, Zap, ArrowRight } from "lucide-react";
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
