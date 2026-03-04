@@ -1,22 +1,27 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export function AdBanner() {
+  const initialized = useRef(false);
+
   useEffect(() => {
-    try {
-      // @ts-ignore
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-      // Silent error as ad blockers might prevent this
+    if (typeof window !== "undefined" && !initialized.current) {
+      try {
+        // @ts-ignore
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        initialized.current = true;
+      } catch (e) {
+        // Ad blockers or script loading issues
+      }
     }
   }, []);
 
   return (
-    <div className="my-8 w-full flex justify-center overflow-hidden min-h-[100px] bg-muted/20 rounded-xl items-center border border-dashed">
+    <div className="my-8 w-full flex justify-center overflow-hidden min-h-[100px] bg-muted/10 rounded-xl items-center border border-dashed border-primary/20">
       <ins
         className="adsbygoogle"
-        style={{ display: "block" }}
+        style={{ display: "block", width: "100%", textAlign: "center" }}
         data-ad-client="ca-pub-8786660437030626"
         data-ad-slot="auto"
         data-ad-format="auto"
