@@ -9,7 +9,7 @@ import { TOOLS } from "@/lib/tools";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { Search, Grid, Sparkles, Clock, Star, Zap, ArrowRight } from "lucide-react";
+import { Search, Grid, Sparkles, Clock, Star, Zap, ArrowRight, History } from "lucide-react";
 import { collection, query, orderBy, limit } from "firebase/firestore";
 import { formatDistanceToNow } from "date-fns";
 
@@ -98,8 +98,9 @@ export default function Dashboard() {
             </Card>
 
             <Card className="glass-card">
-              <CardHeader className="p-4">
+              <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
                 <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Recent Activity</CardTitle>
+                <History size={16} className="text-muted-foreground" />
               </CardHeader>
               <CardContent className="p-4 pt-0 space-y-4">
                 {isLogsLoading ? (
@@ -111,7 +112,7 @@ export default function Dashboard() {
                         <Clock size={14} />
                       </div>
                       <div className="flex-1">
-                        <p className="font-medium">{log.toolName}</p>
+                        <p className="font-medium truncate max-w-[150px]">{log.toolName}</p>
                         <p className="text-xs text-muted-foreground">
                           {formatDistanceToNow(new Date(log.timestamp), { addSuffix: true })}
                         </p>
@@ -120,6 +121,11 @@ export default function Dashboard() {
                   ))
                 ) : (
                   <p className="text-xs text-muted-foreground italic">No recent activity found. Try a tool!</p>
+                )}
+                {recentLogs && recentLogs.length > 0 && (
+                  <Button variant="link" className="w-full text-xs text-primary p-0 h-auto" asChild>
+                    <Link href="/history">View all history</Link>
+                  </Button>
                 )}
               </CardContent>
             </Card>

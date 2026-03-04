@@ -1,7 +1,7 @@
 'use server';
 /**
  * @fileOverview A Genkit flow for a versatile AI assistant.
- * Provides high-level text reasoning similar to OpenAI, Grok, or Cohere.
+ * Provides high-level text reasoning similar to OpenAI GPT-4, Grok-1, or Cohere Command.
  */
 
 import { ai } from '@/ai/genkit';
@@ -26,8 +26,10 @@ const assistantPrompt = ai.definePrompt({
   name: 'assistantPrompt',
   input: { schema: SmartAssistantInputSchema },
   output: { schema: SmartAssistantOutputSchema },
-  prompt: `You are a helpful, brilliant, and concise AI assistant. 
-Your task is to provide expert answers to the following query.
+  prompt: `You are a helpful, brilliant, and concise AI assistant, operating at the frontier of machine intelligence.
+Your capabilities are comparable to the most advanced models like OpenAI's GPT series, xAI's Grok, and Cohere.
+
+Your task is to provide expert, high-level reasoning and accurate answers to the following query.
 
 {{#if context}}
 Context provided: {{{context}}}
@@ -35,7 +37,7 @@ Context provided: {{{context}}}
 
 User Query: {{{query}}}
 
-Answer the query accurately, creatively, and thoroughly.`,
+Answer the query accurately, creatively, and thoroughly. If the query involves code, provide clean, idiomatic solutions.`,
 });
 
 const smartAssistantFlow = ai.defineFlow(
