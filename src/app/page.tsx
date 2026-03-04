@@ -5,10 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TOOLS } from "@/lib/tools";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Sparkles, Zap, Shield, Cpu } from "lucide-react";
+import Image from "next/image";
 
 export default function Home() {
+  const dashboardPreview = PlaceHolderImages.find(img => img.id === 'dashboard-preview');
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Navbar />
@@ -124,12 +128,16 @@ export default function Home() {
             </div>
             <div className="relative">
               <div className="absolute -inset-4 bg-gradient-to-tr from-primary/20 to-accent/20 blur-2xl -z-10 rounded-[3rem]" />
-              <img 
-                src="https://picsum.photos/seed/tool/800/600" 
-                alt="Dashboard Preview" 
-                className="rounded-2xl shadow-2xl border border-white/20 animate-float"
-                data-ai-hint="dashboard design"
-              />
+              {dashboardPreview && (
+                <Image 
+                  src={dashboardPreview.imageUrl} 
+                  alt={dashboardPreview.description}
+                  width={800}
+                  height={600}
+                  className="rounded-2xl shadow-2xl border border-white/20 animate-float"
+                  data-ai-hint={dashboardPreview.imageHint}
+                />
+              )}
             </div>
           </div>
         </div>

@@ -1,0 +1,10 @@
+{
+  "placeholderImages": [
+    {
+      "id": "dashboard-preview",
+      "description": "A preview of the AI tools dashboard",
+      "imageUrl": "https://picsum.photos/seed/tool/800/600",
+      "imageHint": "dashboard design"
+    }
+  ]
+}

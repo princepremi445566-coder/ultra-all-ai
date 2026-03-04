@@ -8,11 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { TOOLS } from "@/lib/tools";
 import Link from "next/link";
 import { useState } from "react";
+import { useUser } from "@/firebase";
 import { Search, Grid, Sparkles, Clock, Star, Zap, ArrowRight } from "lucide-react";
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "ai" | "utility">("all");
+  const { user } = useUser();
 
   const filteredTools = TOOLS.filter(tool => {
     const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -21,6 +23,8 @@ export default function Dashboard() {
     return matchesSearch && matchesTab;
   });
 
+  const firstName = user?.displayName ? user.displayName.split(' ')[0] : "Creator";
+
   return (
     <div className="min-h-screen bg-[#F4F0F8]">
       <Navbar />
@@ -28,7 +32,7 @@ export default function Dashboard() {
       <main className="container mx-auto px-4 pt-32 pb-20">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Welcome back, <span className="gradient-text">Creator</span></h1>
+            <h1 className="text-4xl font-bold mb-2">Welcome back, <span className="gradient-text">{firstName}</span></h1>
             <p className="text-muted-foreground">What would you like to build today?</p>
           </div>
           
