@@ -10,16 +10,24 @@ import { AdBanner } from "@/components/AdBanner";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
-import { Search, Grid, Sparkles, Clock, Star, Zap, ArrowRight, History } from "lucide-react";
+import { Search, Grid, Sparkles, Clock, Star, Zap, ArrowRight, History, Loader2 } from "lucide-react";
 import { collection, query, orderBy, limit } from "firebase/firestore";
 import { formatDistanceToNow } from "date-fns";
+import { useRouter } from "next/navigation";
 
 export default function Dashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "ai" | "utility">("all");
   const [greeting, setGreeting] = useState("Creator");
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, isUserLoading, router]);
 
   useEffect(() => {
     if (user?.displayName) {
@@ -46,6 +54,14 @@ export default function Dashboard() {
   }, [firestore, user]);
 
   const { data: recentLogs, isLoading: isLogsLoading } = useCollection(recentLogsQuery);
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F4F0F8]">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F4F0F8]">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -9,10 +10,18 @@ import { format } from "date-fns";
 import { History as HistoryIcon, Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function HistoryPage() {
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, isUserLoading, router]);
 
   const historyQuery = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -23,6 +32,14 @@ export default function HistoryPage() {
   }, [firestore, user]);
 
   const { data: logs, isLoading } = useCollection(historyQuery);
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F4F0F8]">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F4F0F8]">

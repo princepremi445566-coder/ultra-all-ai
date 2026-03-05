@@ -1,11 +1,11 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { TOOLS } from "@/lib/tools";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { InstagramBioForm } from "@/components/tools/InstagramBioForm";
 import { YoutubeTitleForm } from "@/components/tools/YoutubeTitleForm";
@@ -15,13 +15,31 @@ import { QRGeneratorForm } from "@/components/tools/QRGeneratorForm";
 import { ImageGeneratorForm } from "@/components/tools/ImageGeneratorForm";
 import { SmartAssistantForm } from "@/components/tools/SmartAssistantForm";
 import { LoveCalculatorForm } from "@/components/tools/LoveCalculatorForm";
+import { useUser } from "@/firebase";
+import { useRouter } from "next/navigation";
 
 export default function ToolPage({ params }: { params: Promise<{ toolId: string }> }) {
   const { toolId } = use(params);
   const tool = TOOLS.find((t) => t.id === toolId);
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, isUserLoading, router]);
   
   if (!tool) {
     return <div>Tool not found</div>;
+  }
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#F4F0F8]">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
   }
 
   const renderToolInterface = () => {
