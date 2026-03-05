@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Zap, LayoutDashboard, LogOut, User as UserIcon, LogIn, Menu } from "lucide-react";
+import { Zap, LayoutDashboard, LogOut, User as UserIcon, LogIn, Menu, History } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
@@ -47,7 +47,7 @@ export function Navbar() {
     <>
       <Link href="/#tools" className="hover:text-primary transition-colors py-2 md:py-0">Tools</Link>
       <Link href="/#features" className="hover:text-primary transition-colors py-2 md:py-0">Features</Link>
-      <Link href="/dashboard" className="hover:text-primary transition-colors py-2 md:py-0">Dashboard</Link>
+      {user && <Link href="/dashboard" className="hover:text-primary transition-colors py-2 md:py-0">Dashboard</Link>}
     </>
   );
 
@@ -107,6 +107,12 @@ export function Navbar() {
                       <span>Dashboard</span>
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/history" className="cursor-pointer">
+                      <History className="mr-2 h-4 w-4" />
+                      <span>History</span>
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive cursor-pointer">
                     <LogOut className="mr-2 h-4 w-4" />
@@ -144,9 +150,17 @@ export function Navbar() {
                 <div className="flex flex-col gap-4 text-lg font-medium">
                   <NavLinks />
                   {user && (
-                    <Button variant="destructive" onClick={handleSignOut} className="mt-4 justify-start">
-                      <LogOut size={18} className="mr-2" /> Log Out
-                    </Button>
+                    <>
+                      <Link href="/history" className="hover:text-primary py-2">History</Link>
+                      <Button variant="destructive" onClick={handleSignOut} className="mt-4 justify-start">
+                        <LogOut size={18} className="mr-2" /> Log Out
+                      </Button>
+                    </>
+                  )}
+                  {!user && !isUserLoading && (
+                    <Link href="/login">
+                      <Button className="w-full gradient-bg text-white">Login</Button>
+                    </Link>
                   )}
                 </div>
               </SheetContent>

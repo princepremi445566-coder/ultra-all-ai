@@ -23,6 +23,7 @@ export default function Dashboard() {
   const firestore = useFirestore();
   const router = useRouter();
 
+  // STRICT AUTH GUARD: Redirect to login if not authenticated
   useEffect(() => {
     if (!isUserLoading && !user) {
       router.push("/login");
@@ -32,6 +33,8 @@ export default function Dashboard() {
   useEffect(() => {
     if (user?.displayName) {
       setGreeting(user.displayName.split(' ')[0]);
+    } else if (user?.email) {
+      setGreeting(user.email.split('@')[0]);
     } else {
       setGreeting("Creator");
     }
@@ -88,7 +91,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <aside className="lg:col-span-1 space-y-6">
             <Card className="glass-card">
-              <CardContent className="p-4 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible">
+              <CardContent className="p-4 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible no-scrollbar">
                 <Button 
                   variant={activeTab === "all" ? "default" : "ghost"} 
                   className={`flex-shrink-0 lg:w-full justify-start gap-3 rounded-lg ${activeTab === "all" ? "gradient-bg text-white shadow-lg shadow-primary/20" : ""}`}
@@ -138,11 +141,9 @@ export default function Dashboard() {
                 ) : (
                   <p className="text-xs text-muted-foreground italic">No recent activity found. Try a tool!</p>
                 )}
-                {recentLogs && recentLogs.length > 0 && (
-                  <Button variant="link" className="w-full text-xs text-primary p-0 h-auto" asChild>
-                    <Link href="/history">View all history</Link>
-                  </Button>
-                )}
+                <Button variant="link" className="w-full text-xs text-primary p-0 h-auto" asChild>
+                  <Link href="/history">View all history</Link>
+                </Button>
               </CardContent>
             </Card>
 

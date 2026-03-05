@@ -17,6 +17,7 @@ export default function HistoryPage() {
   const firestore = useFirestore();
   const router = useRouter();
 
+  // STRICT AUTH GUARD
   useEffect(() => {
     if (!isUserLoading && !user) {
       router.push("/login");
