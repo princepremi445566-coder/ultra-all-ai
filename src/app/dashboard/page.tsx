@@ -51,10 +51,10 @@ export default function Dashboard() {
     <div className="min-h-screen bg-[#F4F0F8]">
       <Navbar />
       
-      <main className="container mx-auto px-4 pt-32 pb-20">
+      <main className="container mx-auto px-4 pt-24 md:pt-32 pb-20">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <div>
-            <h1 className="text-4xl font-bold mb-2">Welcome back, <span className="gradient-text">{greeting}</span></h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome back, <span className="gradient-text">{greeting}</span></h1>
             <p className="text-muted-foreground">What would you like to build today?</p>
           </div>
           
@@ -72,24 +72,24 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <aside className="lg:col-span-1 space-y-6">
             <Card className="glass-card">
-              <CardContent className="p-4 space-y-2">
+              <CardContent className="p-4 flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible">
                 <Button 
                   variant={activeTab === "all" ? "default" : "ghost"} 
-                  className={`w-full justify-start gap-3 rounded-lg ${activeTab === "all" ? "gradient-bg text-white shadow-lg shadow-primary/20" : ""}`}
+                  className={`flex-shrink-0 lg:w-full justify-start gap-3 rounded-lg ${activeTab === "all" ? "gradient-bg text-white shadow-lg shadow-primary/20" : ""}`}
                   onClick={() => setActiveTab("all")}
                 >
                   <Grid size={18} /> All Tools
                 </Button>
                 <Button 
                   variant={activeTab === "ai" ? "default" : "ghost"} 
-                  className={`w-full justify-start gap-3 rounded-lg ${activeTab === "ai" ? "gradient-bg text-white shadow-lg shadow-primary/20" : ""}`}
+                  className={`flex-shrink-0 lg:w-full justify-start gap-3 rounded-lg ${activeTab === "ai" ? "gradient-bg text-white shadow-lg shadow-primary/20" : ""}`}
                   onClick={() => setActiveTab("ai")}
                 >
                   <Sparkles size={18} /> AI Tools
                 </Button>
                 <Button 
                   variant={activeTab === "utility" ? "default" : "ghost"} 
-                  className={`w-full justify-start gap-3 rounded-lg ${activeTab === "utility" ? "gradient-bg text-white shadow-lg shadow-primary/20" : ""}`}
+                  className={`flex-shrink-0 lg:w-full justify-start gap-3 rounded-lg ${activeTab === "utility" ? "gradient-bg text-white shadow-lg shadow-primary/20" : ""}`}
                   onClick={() => setActiveTab("utility")}
                 >
                   <Zap size={18} /> Utilities
@@ -97,7 +97,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            <Card className="glass-card">
+            <Card className="glass-card hidden lg:block">
               <CardHeader className="p-4 flex flex-row items-center justify-between space-y-0">
                 <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Recent Activity</CardTitle>
                 <History size={16} className="text-muted-foreground" />
@@ -134,7 +134,7 @@ export default function Dashboard() {
           </aside>
 
           <div className="lg:col-span-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredTools.map((tool) => (
                 <Link href={`/tools/${tool.id}`} key={tool.id} className="block group">
                   <Card className="glass-card h-full hover:shadow-2xl transition-all duration-300 border-transparent hover:border-primary/30 overflow-hidden">
@@ -178,7 +178,9 @@ export default function Dashboard() {
               </div>
             )}
             
-            <AdBanner />
+            <div className="mt-12">
+              <AdBanner />
+            </div>
           </div>
         </div>
       </main>

@@ -1,9 +1,8 @@
-
 "use client";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Zap, LayoutDashboard, LogOut, User as UserIcon, LogIn } from "lucide-react";
+import { Zap, LayoutDashboard, LogOut, User as UserIcon, LogIn, Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
@@ -17,6 +16,13 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -37,6 +43,14 @@ export function Navbar() {
     router.push("/");
   };
 
+  const NavLinks = () => (
+    <>
+      <Link href="/#tools" className="hover:text-primary transition-colors py-2 md:py-0">Tools</Link>
+      <Link href="/#features" className="hover:text-primary transition-colors py-2 md:py-0">Features</Link>
+      <Link href="/dashboard" className="hover:text-primary transition-colors py-2 md:py-0">Dashboard</Link>
+    </>
+  );
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled ? "bg-white/80 backdrop-blur-md border-b border-border py-3 shadow-sm" : "bg-transparent py-5"
@@ -51,10 +65,9 @@ export function Navbar() {
           </span>
         </Link>
 
+        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-          <Link href="/#tools" className="hover:text-primary transition-colors">Tools</Link>
-          <Link href="/#features" className="hover:text-primary transition-colors">Features</Link>
-          <Link href="/dashboard" className="hover:text-primary transition-colors">Dashboard</Link>
+          <NavLinks />
         </div>
 
         <div className="flex items-center gap-3">
@@ -110,6 +123,35 @@ export function Navbar() {
               </Button>
             </Link>
           )}
+
+          {/* Mobile Menu Trigger */}
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-foreground">
+                  <Menu size={24} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px]">
+                <SheetHeader className="mb-8">
+                  <SheetTitle className="flex items-center gap-2">
+                    <div className="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center text-white">
+                      <Zap size={16} />
+                    </div>
+                    <span>Ultra All AI</span>
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="flex flex-col gap-4 text-lg font-medium">
+                  <NavLinks />
+                  {user && (
+                    <Button variant="destructive" onClick={handleSignOut} className="mt-4 justify-start">
+                      <LogOut size={18} className="mr-2" /> Log Out
+                    </Button>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </div>
     </nav>
